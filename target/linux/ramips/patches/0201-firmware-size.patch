@@ -1,0 +1,145 @@
+Index: linux-3.10.14/drivers/mtd/ralink/ralink_bbu_spi.c
+===================================================================
+--- linux-3.10.14.orig/drivers/mtd/ralink/ralink_bbu_spi.c
++++ linux-3.10.14/drivers/mtd/ralink/ralink_bbu_spi.c
+@@ -46,27 +46,27 @@
+ #if defined(CONFIG_SUPPORT_OPENWRT)
+ static struct mtd_partition rt2880_partitions[] = {
+ 	{
+-                name:           "ALL",
+-                size:           MTDPART_SIZ_FULL,
+-                offset:         0,
+-        },
++				name:		 "ALL",
++				size:		 MTDPART_SIZ_FULL,
++				offset:		 0,
++	},
+ 	/* Put your own partition definitions here */
+-        {
+-                name:           "Bootloader",
+-                size:           MTD_BOOT_PART_SIZE,
+-                offset:         0,
+-        }, {
+-                name:           "Config",
+-                size:           MTD_CONFIG_PART_SIZE,
+-                offset:         MTDPART_OFS_APPEND
+-        }, {
+-                name:           "Factory",
+-                size:           MTD_FACTORY_PART_SIZE,
+-                offset:         MTDPART_OFS_APPEND
++	{
++				name:		 "Bootloader",
++				size:		 0x30000,
++				offset:		 0,
++	}, {
++				name:		 "Config",
++				size:		 0x10000,
++				offset:		 MTDPART_OFS_APPEND
++	}, {
++				name:		 "Factory",
++				size:		 0x10000,
++				offset:		 MTDPART_OFS_APPEND
+ 	}, {
+-	        name:           "firmware",
+-	        size:           0x800000,
+-	        offset:         0x50000,
++				name:		 "firmware",
++				size:		 MTDPART_SIZ_FULL,
++				offset:		 MTDPART_OFS_APPEND
+ 	}
+ };
+ #else /* CONFIG_SUPPORT_OPENWRT */
+Index: linux-3.10.14/drivers/mtd/ralink/ralink_nand.c
+===================================================================
+--- linux-3.10.14.orig/drivers/mtd/ralink/ralink_nand.c
++++ linux-3.10.14/drivers/mtd/ralink/ralink_nand.c
+@@ -138,27 +138,27 @@ const unsigned int nand_size_map[2][3] =
+ #if defined (CONFIG_SUPPORT_OPENWRT)
+ static struct mtd_partition rt2880_partitions[] = {
+ 	{
+-                name:           "ALL",
+-                size:           MTDPART_SIZ_FULL,
+-                offset:         0,
+-        },
++				name:		   "ALL",
++				size:		   MTDPART_SIZ_FULL,
++				offset:		   0,
++	},
+ 	/* Put your own partition definitions here */
+-        {
+-                name:           "Bootloader",
+-                size:           NAND_MTD_BOOT_PART_SIZE,
+-                offset:         0,
+-        }, {
+-                name:           "Config",
+-                size:           NAND_MTD_CONFIG_PART_SIZE,
+-                offset:         MTDPART_OFS_APPEND
+-        }, {
+-                name:           "Factory",
+-                size:           NAND_MTD_FACTORY_PART_SIZE,
+-                offset:         MTDPART_OFS_APPEND
++	{
++				name:		   "Bootloader",
++				size:		   NAND_MTD_BOOT_PART_SIZE,
++				offset:		   0,
++	}, {
++				name:		   "Config",
++				size:		   NAND_MTD_CONFIG_PART_SIZE,
++				offset:		   MTDPART_OFS_APPEND
++	}, {
++				name:		   "Factory",
++				size:		   NAND_MTD_FACTORY_PART_SIZE,
++				offset:		   MTDPART_OFS_APPEND
+ 	}, {
+-	        name:           "firmware",
+-	        size:           0x6C0000,
+-	        offset:         0x140000,
++				name:		   "firmware",
++				size:		   MTDPART_SIZ_FULL,
++				offset:		   0x140000,
+ 	}, 
+ };
+ #else /* CONFIG_SUPPORT_OPENWRT */
+Index: linux-3.10.14/drivers/mtd/ralink/ralink_spi.c
+===================================================================
+--- linux-3.10.14.orig/drivers/mtd/ralink/ralink_spi.c
++++ linux-3.10.14/drivers/mtd/ralink/ralink_spi.c
+@@ -48,20 +48,20 @@ static struct mtd_partition rt2880_parti
+      },
+      {
+             name:           "Bootloader",
+-            size:           MTD_BOOT_PART_SIZE,
++            size:           0x30000,
+             offset:         0,
+      }, {
+             name:           "Config",
+-            size:           MTD_CONFIG_PART_SIZE,
++            size:           0x10000,
+             offset:         MTDPART_OFS_APPEND
+      }, {
+             name:           "Factory",
+-            size:           MTD_FACTORY_PART_SIZE,
++            size:           0x10000,
+             offset:         MTDPART_OFS_APPEND
+      }, {
+             name:           "firmware",
+-            size:           0x800000,
+-            offset:         0x50000,
++            size:           MTDPART_SIZ_FULL,
++            offset:         MTDPART_OFS_APPEND,
+      }
+ };
+ 
+Index: linux-3.10.14/drivers/mtd/nand/partition.h
+===================================================================
+--- linux-3.10.14.orig/drivers/mtd/nand/partition.h
++++ linux-3.10.14/drivers/mtd/nand/partition.h
+@@ -44,7 +44,7 @@ static struct mtd_partition g_pasStatic_
+ 	        offset:         MTDPART_OFS_APPEND
+ 	}, {
+ 	        name:           "firmware",
+-	        size:           0x800000,
++	        size:           MTDPART_SIZ_FULL,
+ 	        offset:         0x140000,
+ 	},
+ };

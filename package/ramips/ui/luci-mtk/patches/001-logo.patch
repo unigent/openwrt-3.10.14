@@ -1,0 +1,13 @@
+Index: luci/themes/bootstrap/luasrc/view/themes/bootstrap/header.htm
+===================================================================
+--- luci.orig/themes/bootstrap/luasrc/view/themes/bootstrap/header.htm
++++ luci/themes/bootstrap/luasrc/view/themes/bootstrap/header.htm
+@@ -119,7 +119,7 @@ You may obtain a copy of the License at
+   <header>
+    <div class="fill">
+     <div class="container">
+-     <a class="brand" href="#"><%=hostname%></a>
++     <a class="brand" href="#"><span style="color:yellow;padding-right: 3px;"> MediaTek </span><%=hostname%></a>
+      <ul class="nav">
+ 	 <%-
+ 		local function submenu(prefix, node)

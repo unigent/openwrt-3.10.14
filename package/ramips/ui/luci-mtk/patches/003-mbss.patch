@@ -1,0 +1,40 @@
+Index: luci/modules/base/luasrc/model/network.lua
+===================================================================
+--- luci.orig/modules/base/luasrc/model/network.lua
++++ luci/modules/base/luasrc/model/network.lua
+@@ -39,7 +39,7 @@ module "luci.model.network"
+ 
+ IFACE_PATTERNS_VIRTUAL  = { }
+ IFACE_PATTERNS_IGNORE   = { "^wmaster%d", "^wifi%d", "^hwsim%d", "^imq%d", "^ifb%d", "^mon%.wlan%d", "^sit%d", "^gre%d", "^lo$" }
+-IFACE_PATTERNS_WIRELESS = { "^wlan%d", "^wl%d", "^ath%d", "^%w+%.network%d" }
++IFACE_PATTERNS_WIRELESS = { "^wlan%d", "^wl%d", "^ath%d", "^%w+%.network%d", "^ra%d", "^rai%d" }
+ 
+ 
+ protocol = utl.class()
+Index: luci/modules/admin-full/luasrc/view/admin_network/wifi_overview.htm
+===================================================================
+--- luci.orig/modules/admin-full/luasrc/view/admin_network/wifi_overview.htm
++++ luci/modules/admin-full/luasrc/view/admin_network/wifi_overview.htm
+@@ -373,10 +373,12 @@ You may obtain a copy of the License at
+ 					<big><strong><%=guess_wifi_hw(dev)%> (<%=dev:name()%>)</strong></big><br />
+ 					<span id="<%=dev:name()%>-iw-devinfo"></span>
+ 				</td>
++                <!-- fuck the stupid wifi driver!!!!!!
+ 				<td style="width:310px;text-align:right">
+ 					<input type="button" class="cbi-button cbi-button-find" style="width:100px" onclick="location.href='<%=luci.dispatcher.build_url("admin/network/wireless_join")%>?device=<%=dev:name()%>'" title="<%:Find and join network%>" value="<%:Scan%>" />
+ 					<input type="button" class="cbi-button cbi-button-add" style="width:100px" onclick="location.href='<%=luci.dispatcher.build_url("admin/network/wireless_add")%>?device=<%=dev:name()%>'" title="<%:Provide new network%>" value="<%:Add%>" />
+ 				</td>
++                -->
+ 			</tr>
+ 			<!-- /physical device -->
+ 
+@@ -395,7 +397,9 @@ You may obtain a copy of the License at
+ 					<td class="cbi-value-field" style="width:310px;text-align:right">
+ 						<input id="<%=net:id()%>-iw-toggle" type="button" class="cbi-button cbi-button-reload" style="width:100px" onclick="wifi_shutdown('<%=net:id()%>', this)" title="<%:Delete this network%>" value="<%:Enable%>" />
+ 						<input type="button" class="cbi-button cbi-button-edit" style="width:100px" onclick="location.href='<%=net:adminlink()%>'" title="<%:Edit this network%>" value="<%:Edit%>" />
++                        <!-- fuck the stupid wifi driver!!!!!!
+ 						<input type="button" class="cbi-button cbi-button-remove" style="width:100px" onclick="if (confirm('<%:Really delete this wireless network? The deletion cannot be undone!\nYou might lose access to this device if you are connected via this network.%>')) location.href='<%=luci.dispatcher.build_url("admin/network/wireless_delete", net:ifname())%>'" title="<%:Delete this network%>" value="<%:Remove%>" />
++                        -->
+ 					</td>
+ 				</tr>
+ 				<% end %>

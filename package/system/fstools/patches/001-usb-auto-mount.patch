@@ -1,0 +1,82 @@
+Index: fstools-2014-06-22/block.c
+===================================================================
+--- fstools-2014-06-22.orig/block.c
++++ fstools-2014-06-22/block.c
+@@ -246,7 +246,7 @@ static int mount_add(struct uci_section 
+ 	struct blob_attr *tb[__MOUNT_MAX] = { 0 };
+ 	struct mount *m;
+ 
+-        blob_buf_init(&b, 0);
++		blob_buf_init(&b, 0);
+ 	uci_to_blob(&b, s, &mount_attr_list);
+ 	blobmsg_parse(mount_policy, __MOUNT_MAX, tb, blob_data(b.head), blob_len(b.head));
+ 
+@@ -286,7 +286,7 @@ static int swap_add(struct uci_section *
+ 	struct blob_attr *tb[__SWAP_MAX] = { 0 };
+ 	struct mount *m;
+ 
+-        blob_buf_init(&b, 0);
++		blob_buf_init(&b, 0);
+ 	uci_to_blob(&b, s, &swap_attr_list);
+ 	blobmsg_parse(swap_policy, __SWAP_MAX, tb, blob_data(b.head), blob_len(b.head));
+ 
+@@ -324,7 +324,7 @@ static int global_add(struct uci_section
+ {
+ 	struct blob_attr *tb[__CFG_MAX] = { 0 };
+ 
+-        blob_buf_init(&b, 0);
++		blob_buf_init(&b, 0);
+ 	uci_to_blob(&b, s, &config_attr_list);
+ 	blobmsg_parse(config_policy, __CFG_MAX, tb, blob_data(b.head), blob_len(b.head));
+ 
+@@ -381,6 +381,14 @@ static struct mount* find_block(const ch
+ 			return m;
+ 		if (m->device && device && !strcmp(m->device, device))
+ 			return m;
++		/* try wildcard match */
++		if (m->device && device && strchr(m->device, '*'))
++		{
++			char * p = strchr(m->device, '*');
++			if (0 == strncmp(device, m->device, p - m->device))
++				return m;
++		}
++	
+ 	}
+ 
+ 	return NULL;
+@@ -411,7 +419,7 @@ static int config_load(char *cfg)
+ 		char *err;
+ 		uci_get_errorstr(ctx, &err, "fstab");
+ 		ERROR("extroot: failed to load %s/etc/config/%s\n",
+-		      cfg ? cfg : "", err);
++			  cfg ? cfg : "", err);
+ 		free(err);
+ 		return -1;
+ 	}
+@@ -517,7 +525,7 @@ static int print_block_uci(struct blkid_
+ 		printf("\toption\tuuid\t'%s'\n", pr->uuid);
+ 	else
+ 		printf("\toption\tdevice\t'%s'\n", pr->dev);
+-	printf("\toption\tenabled\t'0'\n\n");
++	printf("\toption\tenabled\t'1'\n\n");
+ 
+ 	return 0;
+ }
+@@ -692,7 +700,7 @@ static int mount_device(struct blkid_str
+ 			check_filesystem(pr);
+ 
+ 		err = mount(pr->dev, target, pr->id->name, m->flags,
+-		            (m->options) ? (m->options) : (""));
++					(m->options) ? (m->options) : (""));
+ 		if (err)
+ 			ERROR("mounting %s (%s) as %s failed (%d) - %s\n",
+ 					pr->dev, pr->id->name, target, err, strerror(err));
+@@ -1016,7 +1024,7 @@ static int main_detect(int argc, char **
+ 	cache_load(0);
+ 	printf("config 'global'\n");
+ 	printf("\toption\tanon_swap\t'0'\n");
+-	printf("\toption\tanon_mount\t'0'\n");
++	printf("\toption\tanon_mount\t'1'\n");
+ 	printf("\toption\tauto_swap\t'1'\n");
+ 	printf("\toption\tauto_mount\t'1'\n");
+ 	printf("\toption\tdelay_root\t'5'\n");

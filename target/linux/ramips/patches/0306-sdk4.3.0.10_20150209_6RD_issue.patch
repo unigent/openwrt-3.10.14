@@ -1,0 +1,12 @@
+Index: linux-3.10.14/net/nat/hw_nat/ra_nat.c
+===================================================================
+--- linux-3.10.14.orig/net/nat/hw_nat/ra_nat.c
++++ linux-3.10.14/net/nat/hw_nat/ra_nat.c
+@@ -1259,6 +1259,7 @@ int32_t PpeParseLayerInfo(struct sk_buff
+ 				memcpy(&PpeParseResult.uh.dest, &uh->dest, sizeof(uh->dest));
+ 			}
+ 			PpeParseResult.pkt_type = IPV6_6RD;
++			return 1;
+ 		}
+ #endif
+ #endif

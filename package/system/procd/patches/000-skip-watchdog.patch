@@ -1,0 +1,14 @@
+Index: procd-2014-09-15/watchdog.c
+===================================================================
+--- procd-2014-09-15.orig/watchdog.c
++++ procd-2014-09-15/watchdog.c
+@@ -97,7 +97,8 @@ void watchdog_init(int preinit)
+ 
+ 	if (wdt_fd >= 0)
+ 		return;
+-
++	//skip watch_dog
++	return;
+ 	wdt_timeout.cb = watchdog_timeout_cb;
+ 	if (env) {
+ 		DEBUG(2, "Watchdog handover: fd=%s\n", env);

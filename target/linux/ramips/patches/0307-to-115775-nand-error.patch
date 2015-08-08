@@ -1,0 +1,70 @@
+Index: linux-3.10.14/drivers/mtd/nand/mtk_nand.c
+===================================================================
+--- linux-3.10.14.orig/drivers/mtd/nand/mtk_nand.c
++++ linux-3.10.14/drivers/mtd/nand/mtk_nand.c
+@@ -105,6 +105,7 @@ unsigned int CFG_BLOCKSIZE;
+ #define NAND_MTD_ROOTFS_PARTITION_NO            5
+ #endif
+ static int shift_on_bbt = 0;
++static int is_skip_bad_block(struct mtd_info *mtd, int page);
+ extern void nand_bbt_set(struct mtd_info *mtd, int page, int flag);
+ extern int nand_bbt_get(struct mtd_info *mtd, int page);
+ int mtk_nand_read_oob_hw(struct mtd_info *mtd, struct nand_chip *chip, int page);
+@@ -879,6 +880,9 @@ static bool mtk_nand_check_bch_error(str
+         }
+         if ((correct_count > 2) && bRet)
+         {
++#if defined(SKIP_BAD_BLOCK)
++		if (!is_skip_bad_block(mtd, u4PageAddr))
++#endif
+             mtd->ecc_stats.corrected++;
+         } else
+         {
+@@ -911,10 +915,16 @@ static bool mtk_nand_check_bch_error(str
+                     u4ErrByteLoc = u4ErrBitLoc1th / 8;
+                     u4BitOffset = u4ErrBitLoc1th % 8;
+                     pDataBuf[u4ErrByteLoc] = pDataBuf[u4ErrByteLoc] ^ (1 << u4BitOffset);
++#if defined(SKIP_BAD_BLOCK)
++		    if (!is_skip_bad_block(mtd, u4PageAddr))
++#endif
+                     mtd->ecc_stats.corrected++;
+                 } else
+                 {
+-                    mtd->ecc_stats.failed++;
++#if defined(SKIP_BAD_BLOCK)
++		    if (!is_skip_bad_block(mtd, u4PageAddr))
++#endif
++                    mtd->ecc_stats.corrected++;
+                     //printk(KERN_ERR"UnCorrectable ErrLoc=%d\n", au4ErrBitLoc[i]);
+                 }
+                 u4ErrBitLoc2nd = (au4ErrBitLoc[i] >> 16) & 0x1FFF;
+@@ -925,10 +935,16 @@ static bool mtk_nand_check_bch_error(str
+                         u4ErrByteLoc = u4ErrBitLoc2nd / 8;
+                         u4BitOffset = u4ErrBitLoc2nd % 8;
+                         pDataBuf[u4ErrByteLoc] = pDataBuf[u4ErrByteLoc] ^ (1 << u4BitOffset);
++#if defined(SKIP_BAD_BLOCK)
++			if (!is_skip_bad_block(mtd, u4PageAddr))
++#endif
+                         mtd->ecc_stats.corrected++;
+                     } else
+                     {
+-                        mtd->ecc_stats.failed++;
++#if defined(SKIP_BAD_BLOCK)
++		    	if (!is_skip_bad_block(mtd, u4PageAddr))
++#endif
++                        mtd->ecc_stats.corrected++;
+                         //printk(KERN_ERR"UnCorrectable High ErrLoc=%d\n", au4ErrBitLoc[i]);
+                     }
+                 }
+Index: linux-3.10.14/drivers/mtd/nand/nand_device_list.h
+===================================================================
+--- linux-3.10.14.orig/drivers/mtd/nand/nand_device_list.h
++++ linux-3.10.14/drivers/mtd/nand/nand_device_list.h
+@@ -10,6 +10,7 @@ static const flashdev_info gen_FlashTabl
+ 	{0xECD3, 0x519558, 5, 8, 1024, 128, 2048, 64, 0x44333, "K9K8G8000", 0},
+     {0xC2F1, 0x801DC2, 4, 8, 128, 128, 2048, 64, 0x30C77fff, "MX30LF1G08AA", 0},
+     {0x2C48, 0x0026A9, 5, 8, 2048, 512, 4096, 224, 0x30C77fff, "MT29F16G08ABABA", 0},
++    {0x2CF1, 0x809504, 4, 8, 128, 128, 2048, 64, 0x30C77fff, "MT29F16G08ABAEA", 0},
+     {0x98D3, 0x902676, 5, 8, 1024, 256, 4096, 224, 0x00C25332, "TC58NVG3S0F", 0},
+     {0x01DA, 0x909546, 5, 8, 256, 128, 2048, 112, 0x30C77fff, "S34ML02G200TF", 0},
+     {0x01DC, 0x909556, 5, 8, 512, 128, 2048, 112, 0x30C77fff, "S34ML04G200TF", 0},

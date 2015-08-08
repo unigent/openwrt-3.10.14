@@ -1,0 +1,13 @@
+Index: mt7603e-p4rev-111741/src/include/os/rt_linux.h
+===================================================================
+--- mt7603e-p4rev-111741.orig/src/include/os/rt_linux.h
++++ mt7603e-p4rev-111741/src/include/os/rt_linux.h
+@@ -338,7 +338,7 @@ typedef spinlock_t			OS_NDIS_SPIN_LOCK;
+ #define OS_NdisFreeSpinLock(lock)				\
+ 	do{}while(0)
+ 
+-#ifdef MULTI_CORE_SUPPORT
++#if 0 /* 3.10.14 kernel softirq warning when close HW irq in softirq */
+ #define OS_SEM_LOCK(__lock)						\
+     {                                               \
+         spin_lock_irq((spinlock_t *)(__lock));      \

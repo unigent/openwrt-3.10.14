@@ -1,0 +1,41 @@
+#!/bin/sh
+nfc_prepare(){
+iwpriv $1 set WscVersion2=20
+iwpriv $1 set WscExtraTlvTag=0x1088
+iwpriv $1 set WscExtraTlvType=0
+iwpriv $1 set WscExtraTlvData=
+iwpriv $1 set WscV2Support=1
+iwpriv $1 set WscFragment=0
+iwpriv $1 set WscFragmentSize=128
+iwpriv $1 set WscConfMode=7
+}
+nfc_enable(){
+iwpriv $1 set NfcStatus=1
+}
+write_passwd_token(){
+iwpriv $1 set NfcPasswdToken=1
+}
+
+read_passwd_token(){
+iwpriv $1 set NfcPasswdToken=14
+}
+nfc_start(){
+nfc_prepare "$1"
+nfchod "-s" "$1" &
+sleep 1
+nfc_enable "$1"
+}
+nfc_end(){
+iwpriv $1 set NfcStatus=0
+killall nfchod
+}
+[ -e /dev/mt6605 ] || mknod /dev/mt6605 c 219 0
+[ -e /dev/i2cM0 ] || mknod /dev/i2cM0 c 218 0
+case "$2" in
+	start)nfc_start $1 ;;
+	end)nfc_end $1 ;;
+	*)echo "usage:nfc [interface] [command]"
+	echo "      [interface]:interface name"
+	echo "      [command]:start;end"
+	;;
+esac
